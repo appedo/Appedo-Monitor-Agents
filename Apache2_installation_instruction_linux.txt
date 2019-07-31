@@ -1,0 +1,34 @@
+1. Prerequisites required.
+	Install JRE 1.7 or above. To download JRE 1.7 http://www.oracle.com
+	File write permission for a folder, where agent will be configured.
+	Apache 2.x.x
+
+2. Create @appln_heading@ agent's home directory
+	mkdir /mnt/@download_appln_name_lowercase@_apache_agent
+	cd /mnt/@download_appln_name_lowercase@_apache_agent
+
+3. Download the agent under /mnt/@download_appln_name_lowercase@_apache_agent
+
+4. Untar the downloaded setup 
+	tar -xzmvf @download_appln_name_lowercase@_apache_agent_#VERSION#.tar.gz
+
+5. Add Apache Configurations:
+    a. Open up /etc/httpd/conf/httpd.conf and uncomment the following lines. If the lines are not present, please add them.
+		 <Location /server-status>
+			SetHandler server-status
+			Order deny,allow
+			Deny from all
+			Allow from 127.0.0.1 localhost ip6-localhost
+		 </Location>
+	b. ExtendedStatus On
+	c. Restart Apache Server.
+
+6. Install SSL
+	cp $JAVA_HOME/jre/lib/security/cacerts cacerts_@download_appln_name_lowercase@_agent
+	keytool -import -alias apm.@download_appln_name_lowercase@.com -keystore cacerts_@download_appln_name_lowercase@_agent -storepass changeit -file apm.@download_appln_name_lowercase@.com.crt -noprompt
+	Note: "changeit" is the default store password for the "cacerts". If it changed, then use the new password in the above and below commands.
+
+7. Run the agent in background:
+	cd /mnt/@download_appln_name_lowercase@_apache_agent
+	nohup java -Djavax.net.ssl.trustStore=cacerts_@download_appln_name_lowercase@_agent -Djavax.net.ssl.trustStorePassword=changeit -jar @download_appln_name_lowercase@_apache_agent_#VERSION#.jar > logs/@download_appln_name_lowercase@_apache_agent_#VERSION#_$(date +%Y-%m-%d_%H%M).log &
+	

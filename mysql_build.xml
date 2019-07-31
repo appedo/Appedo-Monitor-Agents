@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<project name="Appedo_Mysql_Agent" default="mysql">
+		<path id="libpath">
+             <fileset dir="lib">
+                <include name="**/*.jar"/>
+             </fileset>
+        </path> 
+		<target name="init">
+			<property name="src_dir" value="src/com/appedo/agent"/>
+			<property name="classes" value="appedo_temp/mysql/classes"/>
+		</target>        
+		<target name="prepare" depends="init">
+	        <mkdir dir="${classes}"/>
+		</target>
+        <target name="compile" depends="prepare">
+            <javac destdir="${classes}" debug="true" srcdir="src/" includeantruntime="false">
+			<!--	<exclude name="**/StandaloneModel.java"/>
+				<exclude name="**/JbossMonitorManager.java"/>
+				<exclude name="**/DomainModeModel.java"/>
+				<exclude name="**/JbossMonitorTimer.java"/>
+				<exclude name="**/AgentIgnitorJbossThread.java"/>
+				<exclude name="**/AgentIgnitorJbossMonitor.java"/> -->
+			            <classpath refid="libpath"/>
+            </javac>
+        </target>
+        <target name="mysql" depends="compile">
+			<jar jarfile="${jars}/appedo_mysql_agent_${1}.${2}.jar" manifest="META-INF/MANIFEST MySQL.MF">
+				<fileset dir="${classes}"/>
+			</jar>
+		</target>
+</project>

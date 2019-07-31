@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<project name="Appedo_JStack_Agent" default="jstack">
+	<path id="libpath">
+		<fileset dir="lib">
+			<include name="**/*.jar"/>
+			<!--<exclude name="**/jboss-cli-client.jar"/>-->
+		</fileset>
+	</path>
+	
+	<target name="init">
+		<property name="src_dir" value="src/com/appedo/agent"/>
+		<property name="classes" value="appedo_temp/jstack/classes"/>
+		<property name="jars" value="appedo_temp/jars"/>
+	</target>		
+	
+	<target name="prepare" depends="init">
+		<mkdir dir="${classes}"/>
+	</target>
+	
+	<target name="compile" depends="prepare">
+		<javac destdir="${classes}" debug="true" srcdir="src/" includeantruntime="false">
+			<exclude name="**/StandaloneModel.java"/>
+			<exclude name="**/JbossMonitorManager.java"/>
+			<exclude name="**/DomainModeModel.java"/>
+			<exclude name="**/JbossMonitorTimer.java"/>
+			<exclude name="**/AgentIgnitorJbossThread.java"/>
+			<exclude name="**/AgentIgnitorJbossMonitor.java"/>
+			<exclude name="**/AppListComparison.java"/>
+			<classpath refid="libpath"/>
+		</javac>
+	</target>
+	
+	<target name="jstack" depends="compile">
+		<jar jarfile="${jars}/appedo_jstack_agent_${1}.${2}.jar" manifest="META-INF/MANIFEST JStack.MF">
+			<fileset dir="${classes}"/>
+		</jar>
+	</target>
+</project>

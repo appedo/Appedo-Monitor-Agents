@@ -1,0 +1,38 @@
+1. Prerequisites required.
+	Install JRE 1.7 or above. To download JRE 1.7 http://www.oracle.com
+	File write permission for a folder, where agent will be configured.
+	Tomcat 6.x/7.x should be installed.
+2. Create @appln_heading@ agent's home folder
+	D:\@download_appln_name_lowercase@_pg_agent
+3. Download the agent under D:\@download_appln_name_lowercase@_pg_agent
+
+4. Use Winrar/Winzip/Other tools to extract the downloaded setup
+
+5. Add Postgres db configurations:
+	> Open pg_config.properties then specify the LOCAL_LISTERN_PORT,USER_NAME and  USER_PASSWORD as per monitor machine
+	Example:
+	LOCAL_LISTERN_PORT=5432
+	USER_NAME=postgres
+	USER_PASSWORD=postgres	
+	
+	> Open config.properties then specify the database name, in the property `AGENT_CONFIG`. 
+	Example:
+	AGENT_CONFIG=[{..., "dbname": "my_erp"}]
+	
+6. Install SSL
+	copy "%JAVA_HOME%\jre\lib\security\cacerts" cacerts_@download_appln_name_lowercase@_agent
+	keytool -import -alias apm.@download_appln_name_lowercase@.com -keystore cacerts_@download_appln_name_lowercase@_agent -storepass changeit -file apm.@download_appln_name_lowercase@.com.crt -noprompt
+
+	Note: "changeit" is the default store password for the "cacerts". If it changed, then use the new password in the above and below commands.
+7. Run the agent in background:
+	Open Command Prompt
+	cd /D D:\@download_appln_name_lowercase@_pg_agent\
+	For Windows XP :
+	java -Djavax.net.ssl.trustStore=cacerts_@download_appln_name_lowercase@_agent -Djavax.net.ssl.trustStorePassword=changeit -jar @download_appln_name_lowercase@_postgres_agent_#VERSION#.jar > logs/@download_appln_name_lowercase@_postgres_agent_#VERSION#_%date:~10,4%%date:~7,2%%date:~4,2%_%time:~0,2%%time:~3,2%.log
+	For Windows 7:
+	java -Djavax.net.ssl.trustStore=cacerts_@download_appln_name_lowercase@_agent -Djavax.net.ssl.trustStorePassword=changeit -jar @download_appln_name_lowercase@_postgres_agent_#VERSION#.jar > logs/@download_appln_name_lowercase@_postgres_agent_#VERSION#_%date:~6,4%%date:~3,2%%date:~0,2%_%time:~0,2%%time:~3,2%.log
+	
+8. Slow Query configuration
+
+   To enable slow query feature use the given below url 
+   http://www.postgresql.org/docs/9.2/static/pgstatstatements.html

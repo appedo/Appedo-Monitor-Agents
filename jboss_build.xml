@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<project name="Appedo_JBOSS_Agent" default="jboss">
+	<path id="libpath">
+		 <fileset dir="lib">
+			<include name="**/*.jar"/>
+		 </fileset>
+	</path>
+	<target name="init">
+		<property name="src_dir" value="src/com/appedo/agent"/>
+		<property name="classes" value="appedo_temp/jboss/classes"/>
+	</target>
+	<target name="prepare" depends="init">
+		<mkdir dir="${classes}"/>
+	</target>
+	<target name="compile" depends="prepare">
+		<javac destdir="${classes}" debug="true" srcdir="src/" includeantruntime="false">
+			<classpath refid="libpath"/>
+		</javac>
+	</target>
+	<target name="jboss" depends="compile">
+		<jar jarfile="${jars}/appedo_jboss_agent_${1}.${2}.jar" manifest="META-INF/MANIFEST JBOSS.MF">
+			<fileset dir="${classes}"/>
+		</jar>
+	</target>
+</project>

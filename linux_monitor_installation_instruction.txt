@@ -1,0 +1,29 @@
+Linux agent installation instructions:
+
+1. Create @appln_heading@ agent's home directory
+	mkdir /mnt/@download_appln_name_lowercase@_linux_agent
+	cd /mnt/@download_appln_name_lowercase@_linux_agent
+2. Download the agent under /mnt/@download_appln_name_lowercase@_linux_agent
+
+3. Untar the downloaded setup 
+	tar -xzmvf @download_appln_name_lowercase@_linux_agent.tar.gz
+
+4. Install SSL
+	cd @download_appln_name_lowercase@_linux_agent
+	cp $JAVA_HOME/jre/lib/security/cacerts cacerts_@download_appln_name_lowercase@_agent
+	keytool -import -alias apm.@download_appln_name_lowercase@.com -keystore cacerts_@download_appln_name_lowercase@_agent -storepass changeit -file apm.@download_appln_name_lowercase@.com.crt -noprompt
+
+	Note: "changeit" is the default store password for the "cacerts". If it changed, then use the new password in the above and below commands.
+5. Run the agent in background:
+	cd /mnt/@download_appln_name_lowercase@_linux_agent
+	nohup java -Djavax.net.ssl.trustStore=cacerts_@download_appln_name_lowercase@_agent -Djavax.net.ssl.trustStorePassword=changeit -jar @download_appln_name_lowercase@_linux_agent.jar > logs/@download_appln_name_lowercase@_linux_agent_$(date +%Y-%m-%d_%H%M).log &
+	
+Delta Report instruction:
+
+1. The below instruction is applicable for config properties.
+
+2. To compare with installing application, The Key INSTALLED_APP_COMPARE_MODE has to be on TRUE mode.
+
+3. To compare with external file, The key FILE_COMPARE_MODE has to be on TRUE mode and the FILE_PATH should be mentioned.
+
+	

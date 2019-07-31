@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<project name="Appedo_LinuxUnification_Agent" default="linux_unification">
+	<path id="libpath">
+		<fileset dir="lib">
+			<include name="**/*.jar"/>
+			<!--<exclude name="**/jboss-cli-client.jar"/>-->
+		</fileset>
+	</path>
+	
+	<target name="init">
+		<property name="src_dir" value="src/com/appedo/agent"/>
+		<property name="classes" value="appedo_temp/linux_unification/classes"/>
+		<property name="jars" value="appedo_temp/jars"/>
+	</target>		
+	
+	<target name="prepare" depends="init">
+		<mkdir dir="${classes}"/>
+	</target>
+	
+	<target name="compile" depends="prepare">
+		<javac destdir="${classes}" debug="true" srcdir="src/" includeantruntime="false">
+			<exclude name="**/StandaloneModel.java"/>
+			<exclude name="**/JbossMonitorManager.java"/>
+			<exclude name="**/DomainModeModel.java"/>
+			<exclude name="**/JbossMonitorTimer.java"/>
+			<exclude name="**/AgentIgnitorJbossThread.java"/>
+			<exclude name="**/AgentIgnitorJbossMonitor.java"/>
+			<exclude name="**/AppListComparison.java"/>
+			<classpath refid="libpath"/>
+		</javac>
+	</target>
+	
+	<target name="linux_unification" depends="compile">
+		<jar jarfile="${jars}/appedo_linux_unification_agent.jar" manifest="META-INF/MANIFEST LinuxUnification.MF">
+			<fileset dir="${classes}"/>
+		</jar>
+	</target>
+</project>

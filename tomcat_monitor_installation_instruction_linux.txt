@@ -1,0 +1,48 @@
+1. Prerequisites required.
+	Install JRE 1.7 or above. To download JRE 1.7 http://www.oracle.com
+	File write permission for a folder, where agent will be configured.
+	Tomcat 6.x/7.x should be installed.
+	
+2. Create @appln_heading@ agent's home directory
+	mkdir /mnt/@download_appln_name_lowercase@_tomcat_agent
+	cd /mnt/@download_appln_name_lowercase@_tomcat_agent
+	
+3. Download the agent under /mnt/@download_appln_name_lowercase@_tomcat_agent
+
+4. Untar the downloaded setup 
+	tar -xzmvf @download_appln_name_lowercase@_tomcat_agent_#VERSION#.tar.gz
+
+5. Update your Tomcat Application details in the config.properties
+	/mnt/@download_appln_name_lowercase@_tomcat_agent/config.properties
+	
+	> Add your Application name (as per name in webapps) & Tomcat port numbers, in the property `AGENT_CONFIG`. 
+	Example:
+	AGENT_CONFIG=[{"guid": "...", "port": "myPort", "app": "myApplication"}, ...]
+
+Note: If the <connector> tag has `address` tag configuration then, add a property `connector_port_address` in the AGENT_CONFIG
+	Example:
+	AGENT_CONFIG=[{"guid": "...", "port": "myPort", "connector_port_address": "0.0.0.0", "app": "myApplication"}, ...]
+	
+6. Add Tomcat Configurations:
+	Add these lines in your TOMCAT_HOME/bin/catalina.sh just after the initial commented lines
+	CATALINA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9005 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
+
+7. Restart the tomcat after the above change in catalina.sh
+
+8. Install SSL
+	cp $JAVA_HOME/jre/lib/security/cacerts cacerts_@download_appln_name_lowercase@_agent
+	keytool -import -alias apm.@download_appln_name_lowercase@.com -keystore cacerts_@download_appln_name_lowercase@_agent -storepass changeit -file apm.@download_appln_name_lowercase@.com.crt -noprompt
+
+	Note: "changeit" is the default store password for the "cacerts". If it changed, then use the new password in the above and below commands.
+	
+9. Run the agent in background:
+	cd /mnt/@download_appln_name_lowercase@_tomcat_agent
+	nohup java -Djavax.net.ssl.trustStore=cacerts_@download_appln_name_lowercase@_agent -Djavax.net.ssl.trustStorePassword=changeit -jar @download_appln_name_lowercase@_tomcat_agent_#VERSION#.jar > logs/@download_appln_name_lowercase@_tomcat_agent_#VERSION#_$(date +%Y-%m-%d_%H%M).log &
+
+	
+Other Options:
+1. Know the applications that you can monitor from your tomcat, by running either one of below commands
+	java -jar @download_appln_name_lowercase@_tomcat_agent_#VERSION#.jar -la
+			OR
+	java -jar @download_appln_name_lowercase@_tomcat_agent_#VERSION#.jar --list-applications
+	

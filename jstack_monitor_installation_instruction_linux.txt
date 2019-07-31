@@ -1,0 +1,50 @@
+1. Prerequisites required.
+	Install JRE 1.7 or above. To download JRE 1.7 http://www.oracle.com
+	File write permission for a folder, where agent will be configured.
+	Filebeat; This can be download from Appedo in Top-Right corner menu: "Download Filebeat Tool (Linux)"
+	
+2. Create @appln_heading@ agent's home directory
+	mkdir /mnt/@download_appln_name_lowercase@_jstack_agent
+	cd /mnt/@download_appln_name_lowercase@_jstack_agent
+	
+3. Download the agent under /mnt/@download_appln_name_lowercase@_jstack_agent
+
+4. Untar the downloaded setup 
+	tar -xzmvf @download_appln_name_lowercase@_jstack_agent_#VERSION#.tar.gz
+	
+5. Update your Application-Server details in the config.properties
+	Config file location: /mnt/@download_appln_name_lowercase@_jstack_agent/config.properties
+	
+	By default, first process comes in `ps -ef` will be monitored, where `grep` filtering could be applied.
+	This can be modified with `jvm_pid_grep_patterns` parameter, which is same as `grep` filtering. Multiple patterns could be given with comma separator.
+	Or by direct PID mention in `jvm_pid` key.
+	
+	Sample `jvm_pid_grep_patterns`: "org.apache.catalina.startup.Bootstrap,my_server,APP_SERVER_02"
+	
+	In case, if grep_pattern is not supportable then, give direct PID to `jvm_pid`. This has priority over `jvm_pid_grep_patterns`.
+	
+	In Linux, if Application-Server is running in different user then, give that user-name to `sudo_user_name`.
+	If `sudo_user_name` user is blank then, just "sudo" prefix will be added.
+	If `sudo_user_name` key is removed then, prefixes will not be added.
+	
+	Eg: ASD_DETAILS={"app_server_1":{"jvm_pid":"","sudo_user_name":"java_user","jvm_pid_grep_patterns":"org.apache.catalina.startup.Bootstrap,APP_SERVER_02"}}
+	Eg: ASD_DETAILS={"app_server_1":{"jvm_pid":"7285","sudo_user_name":"java_user","jvm_pid_grep_patterns":""}}
+	
+6. Install SSL
+	cp $JAVA_HOME/jre/lib/security/cacerts cacerts_@download_appln_name_lowercase@_agent
+	keytool -import -alias apm.@download_appln_name_lowercase@.com -keystore cacerts_@download_appln_name_lowercase@_agent -storepass changeit -file apm.@download_appln_name_lowercase@.com.crt -noprompt
+	
+	Note: "changeit" is the default store password for the "cacerts". If it changed, then use the new password in the above and below commands.
+	
+7. Configure JStack output log in Filebeat:
+	Update the agent's log path in filebeat.yml, under "path" heading. Eg:
+  paths:
+    - /mnt/@download_appln_name_lowercase@_jstack_agent/logs/jstack*.log
+
+	
+8. Run the agent in background:
+	Start Filebeat.
+	
+	cd /mnt/@download_appln_name_lowercase@_jstack_agent
+	nohup java -Djavax.net.ssl.trustStore=cacerts_@download_appln_name_lowercase@_agent -Djavax.net.ssl.trustStorePassword=changeit -jar @download_appln_name_lowercase@_jstack_agent_#VERSION#.jar > logs/@download_appln_name_lowercase@_jstack_agent_#VERSION#_$(date +%Y-%m-%d_%H%M).log &
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<project name="Appedo_Oracle_Agent" default="oracle">
+		<path id="libpath">
+			 <fileset dir="lib">
+				<include name="**/*.jar"/>
+			 </fileset>
+		</path>
+		<target name="init">
+			<property name="src_dir" value="src/com/appedo/agent"/>
+			<property name="classes" value="appedo_temp/oracle/classes"/>
+		</target>
+		<target name="prepare" depends="init">
+			<mkdir dir="${classes}"/>
+		</target>
+		<target name="compile" depends="prepare">
+			<javac destdir="${classes}" debug="true" includeantruntime="false">
+				 <src path="${src_dir}/bean"/>
+				 <src path="${src_dir}/connect"/>
+				 <src path="${src_dir}/init"/>
+				 <src path="${src_dir}/manager"/>
+				 <src path="${src_dir}/timer"/>
+				 <src path="${src_dir}/utils"/>
+				 <classpath refid="libpath"/>
+			</javac>
+		</target>
+		<target name="oracle" depends="compile">
+			<jar jarfile="${jars}/appedo_oracle_agent_${1}.${2}.jar" manifest="META-INF/MANIFEST Oracle.MF">
+				<fileset dir="${classes}"/>
+			</jar>
+		</target>
+</project>

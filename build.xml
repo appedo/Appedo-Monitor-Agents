@@ -1,0 +1,207 @@
+<project name="Appedo_Monitor_Agents" default="package">
+	<target name="init">
+		<property name="jars" value="appedo_temp/jars"/>
+		
+		<property name="tomcat" value="tomcat_build.xml"/>
+		<property name="jboss" value="jboss_build.xml"/>
+		<property name="linux" value="linux_build.xml"/>
+		<property name="postgresql" value="postgresql_build.xml"/>
+		<property name="mysql" value="mysql_build.xml"/>
+		<property name="apache" value="apache_build.xml"/>
+		<property name="oracle" value="oracle_build.xml"/>
+		<property name="glassfish" value="glassfish_build.xml"/>
+		<property name="weblogic" value="weblogic_build.xml"/>
+		<property name="jstack" value="jstack_build.xml"/>
+		<property name="linux_unification" value="linux_unification_build.xml"/>
+		
+		<property name="tomcat_monitor" value="appedo_temp/appedo_tomcat_monitor_${1}.${2}"/>
+		<property name="jboss_monitor" value="appedo_temp/appedo_jboss_monitor_${1}.${2}"/>
+		<property name="linux_monitor" value="appedo_temp/appedo_linux_monitor"/>
+		<property name="mysql_monitor" value="appedo_temp/appedo_mysql_monitor_${1}.${2}"/>
+		<property name="postgres_monitor" value="appedo_temp/appedo_postgres_monitor_${1}.${2}"/>
+		<property name="apache_monitor" value="appedo_temp/appedo_apache_monitor_${1}.${2}"/>
+		<property name="oracle_monitor" value="appedo_temp/appedo_oracle_monitor_${1}.${2}"/>
+		<property name="glassfish_monitor" value="appedo_temp/appedo_glassfish_monitor_${1}.${2}"/>
+		<property name="weblogic_monitor" value="appedo_temp/appedo_weblogic_monitor_${1}.${2}"/>
+		<property name="jstack_monitor" value="appedo_temp/appedo_jstack_monitor_${1}.${2}"/>
+		<property name="linux_unification_monitor" value="appedo_temp/appedo_linux_unification_monitor"/>
+	</target>
+	
+	<target name="clean" depends="init">
+		<delete dir="appedo_temp"/>
+	</target>
+	
+	<target name="prepare" depends="clean">
+		<mkdir dir="${jars}"/>
+		<mkdir dir="${tomcat_monitor}"/>
+		<mkdir dir="${jboss_monitor}"/> 
+		<mkdir dir="${linux_monitor}"/>
+		<mkdir dir="${mysql_monitor}"/>
+		<mkdir dir="${postgres_monitor}"/>
+		<mkdir dir="${apache_monitor}"/>
+		<mkdir dir="${oracle_monitor}"/>
+		<mkdir dir="${glassfish_monitor}"/>
+		<mkdir dir="${weblogic_monitor}"/>
+		<mkdir dir="${jstack_monitor}"/>
+		<mkdir dir="${linux_unification_monitor}"/>
+		
+		<mkdir dir="${tomcat_monitor}/lib"/>
+		<mkdir dir="${jboss_monitor}/lib"/> 
+		<mkdir dir="${linux_monitor}/lib"/>
+		<mkdir dir="${mysql_monitor}/lib"/>
+		<mkdir dir="${postgres_monitor}/lib"/>
+		<mkdir dir="${apache_monitor}/lib"/>
+		<mkdir dir="${oracle_monitor}/lib"/>
+		<mkdir dir="${glassfish_monitor}/lib"/>
+		<mkdir dir="${weblogic_monitor}/lib"/>
+		<mkdir dir="${jstack_monitor}/lib"/>
+		<mkdir dir="${linux_unification_monitor}/lib"/>
+	</target>
+	
+	<target name="jar" depends="clean">
+		<ant antfile="${tomcat}" target="tomcat"/>
+		<ant antfile="${jboss}" target="jboss"/> 
+		<ant antfile="${linux}" target="linux"/>
+		<ant antfile="${postgresql}" target="postgresql"/>
+		<ant antfile="${mysql}" target="mysql"/>
+		<ant antfile="${apache}" target="apache"/>
+		<ant antfile="${oracle}" target="oracle"/>
+		<ant antfile="${glassfish}" target="glassfish"/>
+		<ant antfile="${weblogic}" target="weblogic"/>
+		<ant antfile="${jstack}" target="jstack"/>
+		<ant antfile="${linux_unification}" target="linux_unification"/>
+	</target>
+	
+	<target name="package" depends="jar">
+		<!-- Tomcat Monitor -->
+		<copy file="tomcat_monitor_installation_instruction_windows.txt" todir="${tomcat_monitor}"/>
+		<copy file="tomcat_monitor_installation_instruction_linux.txt" todir="${tomcat_monitor}"/>
+		<copy todir="${tomcat_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="tomcat_config.properties" tofile="${tomcat_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${tomcat_monitor}"/>
+		<mkdir dir="${tomcat_monitor}/logs"/>
+		<copy file="${jars}/appedo_tomcat_agent_${1}.${2}.jar" todir="${tomcat_monitor}"/>
+		
+		<!-- Jboss Monitor -->
+		<copy file="jboss_installation_instruction_win.txt" todir="${jboss_monitor}"/>
+		<copy file="jboss_installation_instruction_linux.txt" todir="${jboss_monitor}"/>
+		<copy todir="${jboss_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="jboss_config.properties" todir="${jboss_monitor}"/>
+		<copy file="temp_config.properties" tofile="${jboss_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${jboss_monitor}"/>
+		<mkdir dir="${jboss_monitor}/logs"/>
+		<copy file="${jars}/appedo_jboss_agent_${1}.${2}.jar" todir="${jboss_monitor}"/>
+		
+		<!-- Linux Monitor -->
+		<copy file="monitor_startup/JREHome.class" todir="${linux_monitor}"/>
+		<copy file="monitor_startup/start_linux_monitor.sh" todir="${linux_monitor}"/>
+		<copy file="linux_monitor_installation_instruction.txt" todir="${linux_monitor}"/>
+		<copy todir="${linux_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="linux_config.properties" tofile="${linux_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${linux_monitor}"/>
+		<mkdir dir="${linux_monitor}/logs"/>
+		<copy file="${jars}/appedo_linux_agent.jar" todir="${linux_monitor}"/>
+		
+		<!-- MySQL Monitor -->
+		<copy file="mysql_monitor_installation_instruction_windows.txt" todir="${mysql_monitor}"/>
+		<copy file="mysql_monitor_installation_instruction_linux.txt" todir="${mysql_monitor}"/>
+		<copy todir="${mysql_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="mysql_config.properties" todir="${mysql_monitor}"/>
+		<copy file="temp_config.properties" tofile="${mysql_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${mysql_monitor}"/>
+		<mkdir dir="${mysql_monitor}/logs"/>
+		<copy file="${jars}/appedo_mysql_agent_${1}.${2}.jar" todir="${mysql_monitor}"/>
+		
+		<!-- Postgres Monitor -->
+		<copy file="postgres_installation_instruction_win.txt" todir="${postgres_monitor}"/>
+		<copy file="postgres_installation_instruction_linux.txt" todir="${postgres_monitor}"/>
+		<copy todir="${postgres_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="pg_config.properties" todir="${postgres_monitor}"/>
+		<copy file="temp_config.properties" tofile="${postgres_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${postgres_monitor}"/>
+		<mkdir dir="${postgres_monitor}/logs"/>
+		<copy file="${jars}/appedo_postgres_agent_${1}.${2}.jar" todir="${postgres_monitor}"/>
+		
+		<!-- Apache Monitor -->
+		<copy file="Apache2_installation_instruction_linux.txt" todir="${apache_monitor}"/>
+		<copy todir="${apache_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="apache_config.properties" tofile="${apache_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${apache_monitor}"/>
+		<mkdir dir="${apache_monitor}/logs"/>
+		<copy file="${jars}/appedo_apache_agent_${1}.${2}.jar" todir="${apache_monitor}"/>
+
+
+		<!-- Oracle Monitor -->
+
+		<copy file="oracle_monitor_installation_instruction_linux.txt" todir="${oracle_monitor}"/>
+		<copy file="oracle_monitor_installation_instruction_windows.txt" todir="${oracle_monitor}"/>
+		<copy todir="${oracle_monitor}/lib">	
+				<fileset dir="lib"/>
+				</copy>
+		<copy file="oracle_config.properties" todir="${oracle_monitor}"/>
+		<copy file="temp_config.properties" tofile="${oracle_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${oracle_monitor}"/>
+		<mkdir dir="${oracle_monitor}/logs"/>
+		<copy file="${jars}/appedo_oracle_agent_${1}.${2}.jar" todir="${oracle_monitor}"/>
+
+		<!-- GlassFish Monitor -->
+		<copy file="glassfish_monitor_installation_instruction_linux.txt" todir="${glassfish_monitor}"/>
+		<copy file="glassfish_monitor_installation_instruction_windows.txt" todir="${glassfish_monitor}"/>
+		<copy todir="${glassfish_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="glassfish_config.properties" tofile="${glassfish_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${glassfish_monitor}"/>
+		<mkdir dir="${glassfish_monitor}/logs"/>
+		<copy file="${jars}/appedo_glassfish_agent_${1}.${2}.jar" todir="${glassfish_monitor}"/>
+
+		<!-- Weblogic Monitor -->
+		<copy file="weblogic_monitor_installation_instruction_linux.txt" todir="${weblogic_monitor}"/>
+		<copy file="weblogic_monitor_installation_instruction_windows.txt" todir="${weblogic_monitor}"/>
+		<copy todir="${weblogic_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="weblogic_config.properties" todir="${weblogic_monitor}"/>
+		<copy file="temp_config.properties" tofile="${weblogic_monitor}/config.properties"/>
+		<copy file="apm.appedo.com.crt" todir="${weblogic_monitor}"/>
+		<mkdir dir="${weblogic_monitor}/logs"/>
+		<copy file="${jars}/appedo_weblogic_agent_${1}.${2}.jar" todir="${weblogic_monitor}"/>
+		
+		<!-- JStack Monitor -->
+		<copy file="jstack_monitor_installation_instruction_linux.txt" todir="${jstack_monitor}"/>
+		<copy file="jstack_monitor_installation_instruction_windows.txt" todir="${jstack_monitor}"/>
+		<copy todir="${jstack_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="jstack_config.properties" tofile="${jstack_monitor}/config.properties"/>
+		<copy file="log4j.properties" todir="${jstack_monitor}"/>
+		<copy file="apm.appedo.com.crt" todir="${jstack_monitor}"/>
+		<mkdir dir="${jstack_monitor}/logs"/>
+		<copy file="${jars}/appedo_jstack_agent_${1}.${2}.jar" todir="${jstack_monitor}"/>
+		
+		<!-- linuxUnification Monitor -->
+		<copy file="linux_unification_monitor_installation_instruction.txt" todir="${linux_unification_monitor}"/>
+		<copy todir="${linux_unification_monitor}/lib">	
+			<fileset dir="lib"/>
+		</copy>
+		<copy file="linux_unification_config.properties" tofile="${linux_unification_monitor}/config.properties"/>
+		<copy file="pg_config.properties" todir="${linux_unification_monitor}"/>
+		<copy file="oracle_config.properties" todir="${linux_unification_monitor}"/>
+		<copy file="apm.appedo.com.crt" todir="${linux_unification_monitor}"/>
+		<copy file="log4j_linuxUnified.properties" todir="${linux_unification_monitor}"/>
+		<mkdir dir="${linux_unification_monitor}/logs"/>
+		<copy file="${jars}/appedo_linux_unification_agent.jar" todir="${linux_unification_monitor}"/>	
+	</target>
+</project>

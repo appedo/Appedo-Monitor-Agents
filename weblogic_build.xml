@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<project name="Appedo_Weblogic_Agent" default="weblogic">
+		<path id="libpath">
+             <fileset dir="lib">
+                <include name="**/*.jar"/>
+             </fileset>
+        </path> 
+		<target name="init">
+			<property name="src_dir" value="src/com/appedo/agent"/>
+			<property name="classes" value="appedo_temp/weblogic/classes"/>
+		</target>        
+		<target name="prepare" depends="init">
+	        <mkdir dir="${classes}"/>
+		</target>
+        <target name="compile" depends="prepare">
+          <javac destdir="${classes}" debug="true" includeantruntime="false">
+			     <src path="${src_dir}/bean"/>
+                 <src path="${src_dir}/connect"/>
+                 <src path="${src_dir}/init"/>
+                 <src path="${src_dir}/manager"/>
+                 <src path="${src_dir}/timer"/>
+                 <src path="${src_dir}/utils"/>
+                 <classpath refid="libpath"/>
+            </javac>
+        </target>
+        <target name="weblogic" depends="compile">
+          <jar jarfile="${jars}/appedo_weblogic_agent_${1}.${2}.jar">
+					<manifest>
+						<attribute name="Manifest-Version" value="1.0"/>
+						<attribute name="Specification-Title" value="Appedo WebLogic Monitoring Agent "/>
+						<attribute name="Specification-Version" value="${1}"/>
+						<attribute name="Specification-Vendor" value="Appedo Inc"/>
+						<attribute name="Implementation-Title" value="Appedo WebLogic Monitoring Agent "/>
+						<attribute name="Implementation-Version" value="${2}"/>
+						<attribute name="Implementation-Vendor" value="Appedo Inc"/>
+						<attribute name="Main-Class" value="com.appedo.agent.init.AgentIgnitorWebLogicMonitor"/>
+						<attribute name="Class-Path" value="lib/commons-beanutils-1.7.jar lib/commons-codec-1.2.jar lib/commons-collections-3.1.jar lib/commons-exec-1.1.jar lib/commons-httpclient-3.1.jar lib/commons-io-1.4.jar lib/commons-lang.jar lib/commons-logging-1.1.1.jar lib/commons-logging.jar lib/commons-pool-1.1.jar lib/ezmorph.jar lib/json-20080701.jar lib/json-lib-2.2.2-jdk15.jar lib/wljmxclient.jar lib/wlclient.jar"/>
+					</manifest>
+					<fileset dir="${classes}"/>
+				</jar>
+		</target>
+</project>
